@@ -1,93 +1,147 @@
+-- ✅ Load Rayfield First
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
-local Window = Rayfield:CreateWindow({
-    Name = "Poop Auto Farm",
-    LoadingTitle = "Booting Systems...",
-    LoadingSubtitle = "Poop Master Elite 🧻",
-    ConfigurationSaving = {
-       Enabled = true,
-       FolderName = "PoopUI",
-       FileName = "Settings"
-    },
-    KeySystem = false
+-- ✅ KEY GATE ✅
+local Key = "jillybartender"
+local KeyLink = "https://workink.net/27mm/s1h3m5wf" 
+
+local KeyWindow = Rayfield:CreateWindow({
+    Name = "Poop Key Gate",
+    LoadingTitle = "Authentication",
+    LoadingSubtitle = "Enter Key To Continue"
 })
 
-local Tab = Window:CreateTab("Auto Farm")
-local Section = Tab:CreateSection("Farming Controls")
+local KeyTab = KeyWindow:CreateTab("Key System")
 
-_G.Config = {
-    poop = false,
-    sell = false,
-    delays = { poop = 0.1, sell = 1 }
-}
-
-local Remotes = {
-    startPoop = game.ReplicatedStorage:WaitForChild("StartPoopMinigameServer"),
-    poopSuccess = game.ReplicatedStorage:WaitForChild("PoopSuccessEvent"),
-    sellBrainrot = game.ReplicatedStorage:WaitForChild("SellBrainrotRequest")
-}
-
-Tab:CreateToggle({
-    Name = "Auto Poop",
-    CurrentValue = false,
-    Flag = "AutoPoop",
-    Callback = function(val)
-        _G.Config.poop = val
-        task.spawn(function()
-            while _G.Config.poop do
-                Remotes.startPoop:FireServer()
-                Remotes.poopSuccess:FireServer()
-                task.wait(_G.Config.delays.poop)
-            end
-        end)
-    end,
+KeyTab:CreateInput({
+    Name = "Enter Key",
+    PlaceholderText = "Enter your key here",
+    RemoveTextAfterFocusLost = false,
+    Callback = function(text)
+        if text == Key then
+            Rayfield:Notify({
+                Title = "Success ✅",
+                Content = "Correct Key! Loading...",
+                Duration = 3
+            })
+            KeyWindow:Destroy()
+            loadMainUI() -- Load the actual script
+        else
+            Rayfield:Notify({
+                Title = "Incorrect ❌",
+                Content = "Wrong key, try again!",
+                Duration = 4
+            })
+        end
+    end
 })
 
-Tab:CreateSlider({
-    Name = "Poop Delay",
-    Range = {0.05, 1},
-    Increment = 0.01,
-    Suffix = "Seconds",
-    CurrentValue = 0.1,
-    Flag = "PoopDelay",
-    Callback = function(val)
-        _G.Config.delays.poop = val
-    end,
-})
-
-Tab:CreateToggle({
-    Name = "Auto Sell",
-    CurrentValue = false,
-    Flag = "AutoSell",
-    Callback = function(val)
-        _G.Config.sell = val
-        task.spawn(function()
-            while _G.Config.sell do
-                Remotes.sellBrainrot:InvokeServer("all")
-                task.wait(_G.Config.delays.sell)
-            end
-        end)
-    end,
-})
-
-Tab:CreateSlider({
-    Name = "Sell Delay",
-    Range = {0.2, 3},
-    Increment = 0.05,
-    Suffix = "Seconds",
-    CurrentValue = 1,
-    Flag = "SellDelay",
-    Callback = function(val)
-        _G.Config.delays.sell = val
-    end,
-})
-
-Window:CreateKeybind({
-    Name = "Toggle UI",
-    CurrentKeybind = "RightShift",
-    HoldToInteract = false,
-    Flag = "UIBind",
+KeyTab:CreateButton({
+    Name = "Copy Key Link",
     Callback = function()
-        Rayfield:Toggle()
-    end,
+        setclipboard(KeyLink)
+        Rayfield:Notify({
+            Title = "Copied ✅",
+            Content = "Key link copied to clipboard",
+            Duration = 3
+        })
+    end
 })
+
+-- ✅ MAIN UI INSIDE A FUNCTION ✅
+function loadMainUI()
+
+    local Window = Rayfield:CreateWindow({
+        Name = "Poop Auto Farm",
+        LoadingTitle = "Booting Systems...",
+        LoadingSubtitle = "Poop Master Elite 🧻",
+        ConfigurationSaving = {
+           Enabled = true,
+           FolderName = "PoopUI",
+           FileName = "Settings"
+        },
+        KeySystem = false
+    })
+
+    local Tab = Window:CreateTab("Auto Farm")
+    local Section = Tab:CreateSection("Farming Controls")
+
+    _G.Config = {
+        poop = false,
+        sell = false,
+        delays = { poop = 0.1, sell = 1 }
+    }
+
+    local Remotes = {
+        startPoop = game.ReplicatedStorage:WaitForChild("StartPoopMinigameServer"),
+        poopSuccess = game.ReplicatedStorage:WaitForChild("PoopSuccessEvent"),
+        sellBrainrot = game.ReplicatedStorage:WaitForChild("SellBrainrotRequest")
+    }
+
+    Tab:CreateToggle({
+        Name = "Auto Poop",
+        CurrentValue = false,
+        Flag = "AutoPoop",
+        Callback = function(val)
+            _G.Config.poop = val
+            task.spawn(function()
+                while _G.Config.poop do
+                    Remotes.startPoop:FireServer()
+                    Remotes.poopSuccess:FireServer()
+                    task.wait(_G.Config.delays.poop)
+                end
+            end)
+        end,
+    })
+
+    Tab:CreateSlider({
+        Name = "Poop Delay",
+        Range = {0.05, 1},
+        Increment = 0.01,
+        Suffix = "Seconds",
+        CurrentValue = 0.1,
+        Flag = "PoopDelay",
+        Callback = function(val)
+            _G.Config.delays.poop = val
+        end,
+    })
+
+    Tab:CreateToggle({
+        Name = "Auto Sell",
+        CurrentValue = false,
+        Flag = "AutoSell",
+        Callback = function(val)
+            _G.Config.sell = val
+            task.spawn(function()
+                while _G.Config.sell do
+                    Remotes.sellBrainrot:InvokeServer("all")
+                    task.wait(_G.Config.delays.sell)
+                end
+            end)
+        end,
+    })
+
+    Tab:CreateSlider({
+        Name = "Sell Delay",
+        Range = {0.2, 3},
+        Increment = 0.05,
+        Suffix = "Seconds",
+        CurrentValue = 1,
+        Flag = "SellDelay",
+        Callback = function(val)
+            _G.Config.delays.sell = val
+        end,
+    }) 
+
+    -- ✅ Toggle UI Keybind
+    Window:CreateKeybind({
+        Name = "Toggle UI",
+        CurrentKeybind = "RightShift",
+        HoldToInteract = false,
+        Flag = "UIBind",
+        Callback = function()
+            Rayfield:Toggle()
+        end,
+    })
+
+end
