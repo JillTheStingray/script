@@ -1,56 +1,7 @@
--- ✅ Load Rayfield First
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
--- ✅ KEY GATE ✅
-local Key = "jillybartender"
-local KeyLink = "https://workink.net/27mm/s1h3m5wf" 
-
-local KeyWindow = Rayfield:CreateWindow({
-    Name = "Poop Key Gate",
-    LoadingTitle = "Authentication",
-    LoadingSubtitle = "Enter Key To Continue"
-})
-
-local KeyTab = KeyWindow:CreateTab("Key System")
-
-KeyTab:CreateInput({
-    Name = "Enter Key",
-    PlaceholderText = "Enter your key here",
-    RemoveTextAfterFocusLost = false,
-    Callback = function(text)
-        if text == Key then
-            Rayfield:Notify({
-                Title = "Success ✅",
-                Content = "Correct Key! Loading...",
-                Duration = 3
-            })
-            KeyWindow:Destroy()
-            loadMainUI() -- Load the actual script
-        else
-            Rayfield:Notify({
-                Title = "Incorrect ❌",
-                Content = "Wrong key, try again!",
-                Duration = 4
-            })
-        end
-    end
-})
-
-KeyTab:CreateButton({
-    Name = "Copy Key Link",
-    Callback = function()
-        setclipboard(KeyLink)
-        Rayfield:Notify({
-            Title = "Copied ✅",
-            Content = "Key link copied to clipboard",
-            Duration = 3
-        })
-    end
-})
-
--- ✅ MAIN UI INSIDE A FUNCTION ✅
+-- ✅ Move main UI to top so it exists before callback
 function loadMainUI()
-
     local Window = Rayfield:CreateWindow({
         Name = "Poop Auto Farm",
         LoadingTitle = "Booting Systems...",
@@ -131,9 +82,8 @@ function loadMainUI()
         Callback = function(val)
             _G.Config.delays.sell = val
         end,
-    }) 
+    })
 
-    -- ✅ Toggle UI Keybind
     Window:CreateKeybind({
         Name = "Toggle UI",
         CurrentKeybind = "RightShift",
@@ -143,5 +93,49 @@ function loadMainUI()
             Rayfield:Toggle()
         end,
     })
-
 end
+
+-- ✅ KEY SYSTEM (now calls existing loadMainUI)
+local Key = "jillybartender"
+local KeyLink = "https://your-key-link.com"
+
+local KeyWindow = Rayfield:CreateWindow({
+    Name = "Poop Key Gate",
+    LoadingTitle = "Authentication",
+    LoadingSubtitle = "Enter Key To Continue"
+})
+
+local KeyTab = KeyWindow:CreateTab("Key System")
+
+KeyTab:CreateInput({
+    Name = "Enter Key",
+    PlaceholderText = "Enter your key here",
+    RemoveTextAfterFocusLost = false,
+    Callback = function(text)
+        if text == Key then
+            Rayfield:Notify({
+                Title = "Success ✅",
+                Content = "Correct Key! Loading..."
+            })
+            task.wait(0.3)
+            KeyWindow:Destroy()
+            loadMainUI() -- ✅ now exists!
+        else
+            Rayfield:Notify({
+                Title = "Incorrect ❌",
+                Content = "Try again!"
+            })
+        end
+    end
+})
+
+KeyTab:CreateButton({
+    Name = "Copy Key Link",
+    Callback = function()
+        setclipboard(KeyLink)
+        Rayfield:Notify({
+            Title = "Copied ✅",
+            Content = "Key link copied to clipboard"
+        })
+    end
+})
